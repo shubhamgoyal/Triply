@@ -1,4 +1,3 @@
-from bs4 import BeautifulSoup
 import requests
 import mechanize
 import pprint
@@ -44,7 +43,7 @@ def getIDForLocation():
 				result_dict['coords'] = result['coords']
 				ids.append(result_dict)
 				ids_list.append(result['value'])
-	return flask.jsonify(ids)
+	return flask.jsonify({'data':ids})
 
 @app.route('/recommendations')
 def getRecommendationsForLocation():
