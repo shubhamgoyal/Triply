@@ -3,6 +3,9 @@ import mechanize
 import pprint
 import json
 import random
+import urllib2
+import simplejson
+import socket
 
 import flask
 from flask import Flask, request, redirect, url_for
@@ -28,7 +31,9 @@ app = Flask(__name__)
 def hello_world():
     return redirect(url_for("static", filename="index.html"))
 
-
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("gmail.com",80))
+ip_address = s.getsockname()[0]
 
 @app.route('/search')
 def getIDForLocation():
@@ -75,9 +80,19 @@ def getRecommendationsForLocation():
 			detail_url = result_random['api_detail_url']
 			response_detail = json.loads(str(browser.open(detail_url).read()))
 			result_random['api_detail_url'] = response_detail
+			image_search_url = ('https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=' + result_random['name'] + '&userip=' + ip_address)
+			image_search_url = image_search_url.replace(' ', '%20')
+			pprint.pprint(image_search_url)
+			image_search_request = urllib2.Request(image_search_url, None, {'Referer': 'www.hax.sg'})
+			image_search_response = urllib2.urlopen(image_search_request)
+			image_search_results = simplejson.load(image_search_response)
+			# pprint.pprint(image_search_results)
+			image_url = image_search_results['responseData']['results'][0]['url']
+			result_random['image_url'] = image_url
 			return flask.jsonify(result_random)
 	elif str(type) == 'restaurants':
 		while(True):
+			result_random = None
 			lat = request.args.get('lat')
 			lon = request.args.get('lon')
 			# restaurant_type = request.args.get('type_rest')
@@ -106,7 +121,6 @@ def getRecommendationsForLocation():
 				detail_url = result_random['api_detail_url']
 				response_detail = json.loads(str(browser.open(detail_url).read()))
 				result_random['api_detail_url'] = response_detail
-				return flask.jsonify(result_random)
 			else:
 				pprint.pprint('Angel is stupid')
 				# recommendations_restaurants_url = 'http://api.tripadvisor.com/api/partner/2.0/map/' + lat + ',' + lon + '/restaurants?key=' + API_KEY_TRIPADVISOR + '&subcategory=' + restaurant_type + '&cuisines=' + restaurant_cuisine + '&prices=' + restaurant_price + '&lunit=km&distance=1'
@@ -125,7 +139,15 @@ def getRecommendationsForLocation():
 				detail_url = result_random['api_detail_url']
 				response_detail = json.loads(str(browser.open(detail_url).read()))
 				result_random['api_detail_url'] = response_detail
-				return flask.jsonify(result_random)
+			image_search_url = ('https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=' + result_random['name'] + '&userip=' + ip_address)
+			image_search_url = image_search_url.replace(' ', '%20')
+			image_search_request = urllib2.Request(image_search_url, None, {'Referer': 'www.hax.sg'})
+			image_search_response = urllib2.urlopen(image_search_request)
+			image_search_results = simplejson.load(image_search_response)
+			# pprint.pprint(image_search_results)
+			image_url = image_search_results['responseData']['results'][0]['url']
+			result_random['image_url'] = image_url
+			return flask.jsonify(result_random)
 		
 
 # @app.route('/stop')
@@ -138,7 +160,7 @@ def getFlights():
 	start_date = request.args.get('start_date')
 	end_date = request.args.get('end_date')
 	geolocator = Nominatim()
-	location = geolocator.reverse(str(o_lat + ", " + o_lon), timeout=None)
+	location = geolocator.reverse(str(o_lat + ", " + o_lon), timeout=10)
 	origin_city = str(location.raw['address']['city'])
 	pprint.pprint(origin_city)
 	places_list_url = 'http://partners.api.skyscanner.net/apiservices/autosuggest/v1.0/SG/SGD/en-GB?query=' + origin_city + '&apiKey=prtl6749387986743898559646983194'
