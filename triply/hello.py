@@ -7,10 +7,13 @@ import random
 import flask
 from flask import Flask, request, redirect, url_for
 
+from geopy.geocoders import Nominatim
+
 browser = mechanize.Browser()
 browser.set_handle_robots(False)
 
 API_KEY_TRIPADVISOR = 'SingaporeHack-CDCCADCA7505'
+API_KEY_SKYSCANNER = 'ah575316411675885377228089817799'
 
 subcategories_list_tripadvisor = ['other', 'activities', 'nightlife', 'shopping', 'bars', 'clubs', 'food_drink', 'ranch_farm', 'adventure', 'gear_rentals', 'wellness_spas', 'classes', 'sightseeing_tours', 'performances', 'sports', 'outdoors', 'amusement', 'landmarks', 'zoos_aquariums', 'museums', 'cultural']
 subcategories_restaurants_list_tripadvisor = ['bakery', 'cafe', 'deli', 'fast_food', 'sit_down']
@@ -116,7 +119,73 @@ def getRecommendationsForLocation():
 
 # @app.route('/stop')
 
-# @app.route('/flights')
+@app.route('/destinations')
+def getFlights():
+	o_lat = request.args.get('o_lat')
+	o_lon = request.args.get('o_lon')
+	budget = request.args.get('budget')
+	start_date = request.args.get('start_date')
+	end_date = request.args.get('end_date')
+	geolocator = Nominatim()
+	location = geolocator.reverse(str(o_lat + ", " + o_lon), timeout=None)
+	origin_city = str(location.raw['address']['city'])
+	pprint.pprint(origin_city)
+	places_list_url = 'http://partners.api.skyscanner.net/apiservices/autosuggest/v1.0/SG/SGD/en-GB?query=' + origin_city + '&apiKey=prtl6749387986743898559646983194'
+	pprint.pprint(places_list_url)
+	browser.addheaders = [('accept', 'application/json')]
+	response_list_places = browser.open(places_list_url)
+	# pprint.pprint(places_list_url)
+	html_doc_list_places = str(response_list_places.read())
+	json_dict_list_places = json.loads(html_doc_list_places)
+	origin_city_code = json_dict_list_places['Places'][0]['PlaceId']
+	pprint.pprint(json_dict_list_places)
+	browseroutes_url = 'http://partners.api.skyscanner.net/apiservices/browseroutes/v1.0/SG/SGD/en-GB/' + origin_city_code + '/anywhere/' + start_date + '/' + end_date + '?apiKey=' + API_KEY_SKYSCANNER
+	pprint.pprint(browseroutes_url)
+	response = browser.open(browseroutes_url)
+	html_doc = str(response.read())
+	json_dict_list_routes = json.loads(html_doc)
+	list_routes = json_dict_list_routes['Routes']
+	list_places = json_dict_list_routes['Places']
+	dict_places = {}
+	for place in list_places:
+		dict_places[place['PlaceId']] = place['Name']
+	list_routes_cheapest_ascending = []
+	for route in list_routes:
+		if 'Price' in route:
+			# pprint.pprint('budget = ', str(float(budget)))
+			if float(budget) >= route['Price']:
+				list_routes_cheapest_ascending.append({'destination': dict_places[route['DestinationId']], 'origin': dict_places[route['OriginId']], 'price': route['Price']})
+	list_routes_cheapest_ascending = sorted(list_routes_cheapest_ascending, key=lambda k: k['price'])	
+	# min_price_possible = 0
+	pprint.pprint(json_dict_list_routes)
+	pprint.pprint(browseroutes_url)
+	# for route in list_routes_cheapest_ascending:
+	# 	assert min_price_possible <= route['price']
+	# 	min_price_possible = route['price']
+	list_routes_cities_within_budget = []
+	for cheap_route_country in list_routes_cheapest_ascending:
+		destination = cheap_route_country['destination']
+		destination_places_list_url = 'http://partners.api.skyscanner.net/apiservices/autosuggest/v1.0/SG/SGD/en-GB?query=' + destination + '&apiKey=prtl6749387986743898559646983194'
+		destination_places_list_url = destination_places_list_url.replace(' ', '%20')
+		pprint.pprint(destination_places_list_url)
+		destination_response_list_places = browser.open(destination_places_list_url)
+		destination_html_doc_list_places = str(destination_response_list_places.read())
+		destination_json_dict_list_places = json.loads(destination_html_doc_list_places)
+		destination_country_code = destination_json_dict_list_places['Places'][0]['CountryId']
+		cheap_route_country_cities_url = 'http://partners.api.skyscanner.net/apiservices/browseroutes/v1.0/SG/SGD/en-GB/' + origin_city_code + '/' + destination_country_code + '/' + start_date + '/' + end_date + '?apiKey=' + API_KEY_SKYSCANNER
+		pprint.pprint(cheap_route_country_cities_url)
+		cheap_route_country_cities_dict = json.loads(str(browser.open(cheap_route_country_cities_url).read()))
+		list_routes_cities = cheap_route_country_cities_dict['Routes']
+		list_places_cities = cheap_route_country_cities_dict['Places']
+		dict_places_cities = {}
+		for place in list_places_cities:
+			dict_places_cities[place['PlaceId']] = place['Name']
+		for route in list_routes_cities:
+			if 'Price' in route:
+				if float(budget) >= route['Price']:
+					list_routes_cities_within_budget.append({'destination': dict_places_cities[route['DestinationId']], 'origin': dict_places_cities[route['OriginId']], 'price': route['Price']})			
+	pprint.pprint(cheap_route_country_cities_dict)
+	return flask.jsonify({'data': list_routes_cities_within_budget})
 
 if __name__ == '__main__':
 	app.debug = True
