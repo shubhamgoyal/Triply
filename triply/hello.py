@@ -195,6 +195,7 @@ def getFlights():
 			if 'Price' in route:
 				if float(budget) >= route['Price']:
 					list_routes_cities_within_budget.append({'destination': dict_places_cities[route['DestinationId']], 'origin': dict_places_cities[route['OriginId']], 'price': route['Price']})			
+	list_routes_cities_within_budget = sorted(list_routes_cities_within_budget, key=lambda k: k['price'])				
 	pprint.pprint(cheap_route_country_cities_dict)
 	return flask.jsonify({'data': list_routes_cities_within_budget})
 
