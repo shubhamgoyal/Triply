@@ -5,7 +5,7 @@ import json
 import random
 
 import flask
-from flask import Flask, request
+from flask import Flask, request, redirect, url_for
 
 browser = mechanize.Browser()
 browser.set_handle_robots(False)
@@ -21,7 +21,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-	return app.send_static_file('/static/index.html')
+    return redirect(url_for("static", filename="index.html"))
+
 
 
 @app.route('/search')
