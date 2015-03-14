@@ -75,17 +75,18 @@ def getRecommendationsForLocation():
 		while(True):
 			lat = request.args.get('lat')
 			lon = request.args.get('lon')
-			restaurant_type = request.args.get('type_rest')
+			# restaurant_type = request.args.get('type_rest')
 			restaurant_cuisine = request.args.get('cuisine_rest')
-			restaurant_price = request.args.get('price_rest')
-			if not restaurant_type:
-				restaurant_type = random.choice(subcategories_restaurants_list_tripadvisor)
+			# restaurant_price = request.args.get('price_rest')
+			# if not restaurant_type:
+			# 	restaurant_type = random.choice(subcategories_restaurants_list_tripadvisor)
 			if not restaurant_cuisine:
 				restaurant_cuisine = random.choice(subcategories_restaurants_cuisines_list_tripadvisor)
-			if not restaurant_price:
-				restaurant_price = str(random.choice(subcategories_restaurants_prices_list_tripadvisor))
+			# if not restaurant_price:
+			# 	restaurant_price = str(random.choice(subcategories_restaurants_prices_list_tripadvisor))
 			if not lat and not lon:
-				recommendations_restaurants_url = 'http://api.tripadvisor.com/api/partner/2.0/location/' + location_id + '/restaurants?key=' + API_KEY_TRIPADVISOR + '&subcategory=' + restaurant_type + '&cuisines=' + restaurant_cuisine + '&prices=' + restaurant_price
+				# recommendations_restaurants_url = 'http://api.tripadvisor.com/api/partner/2.0/location/' + location_id + '/restaurants?key=' + API_KEY_TRIPADVISOR + '&subcategory=' + restaurant_type + '&cuisines=' + restaurant_cuisine + '&prices=' + restaurant_price
+				recommendations_restaurants_url = 'http://api.tripadvisor.com/api/partner/2.0/location/' + location_id + '/restaurants?key=' + API_KEY_TRIPADVISOR + '&cuisines=' + restaurant_cuisine
 				response = browser.open(recommendations_restaurants_url)
 				html_doc = str(response.read())
 				json_dict = json.loads(html_doc)
@@ -101,7 +102,8 @@ def getRecommendationsForLocation():
 				return flask.jsonify(result_random)
 			else:
 				pprint.pprint('Angel is stupid')
-				recommendations_restaurants_url = 'http://api.tripadvisor.com/api/partner/2.0/map/' + lat + ',' + lon + '/restaurants?key=' + API_KEY_TRIPADVISOR + '&subcategory=' + restaurant_type + '&cuisines=' + restaurant_cuisine + '&prices=' + restaurant_price + '&lunit=km&distance=1'
+				# recommendations_restaurants_url = 'http://api.tripadvisor.com/api/partner/2.0/map/' + lat + ',' + lon + '/restaurants?key=' + API_KEY_TRIPADVISOR + '&subcategory=' + restaurant_type + '&cuisines=' + restaurant_cuisine + '&prices=' + restaurant_price + '&lunit=km&distance=1'
+				recommendations_restaurants_url = 'http://api.tripadvisor.com/api/partner/2.0/map/' + lat + ',' + lon + '/restaurants?key=' + API_KEY_TRIPADVISOR + '&cuisines=' + restaurant_cuisine + '&lunit=km&distance=1'
 				response = browser.open(recommendations_restaurants_url)
 				html_doc = str(response.read())
 				json_dict = json.loads(html_doc)
