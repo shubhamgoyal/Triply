@@ -15,6 +15,8 @@ browser.set_handle_robots(False)
 API_KEY_TRIPADVISOR = 'SingaporeHack-CDCCADCA7505'
 API_KEY_SKYSCANNER = 'ah575316411675885377228089817799'
 
+NUM_HOTELS = 5
+
 subcategories_list_tripadvisor = ['other', 'activities', 'nightlife', 'shopping', 'bars', 'clubs', 'food_drink', 'ranch_farm', 'adventure', 'gear_rentals', 'wellness_spas', 'classes', 'sightseeing_tours', 'performances', 'sports', 'outdoors', 'amusement', 'landmarks', 'zoos_aquariums', 'museums', 'cultural']
 subcategories_restaurants_list_tripadvisor = ['bakery', 'cafe', 'deli', 'fast_food', 'sit_down']
 subcategories_restaurants_cuisines_list_tripadvisor = ['African','American','Asian','Bakery','Barbecue','British','Cafe','Cajun & Creole','Caribbean','Chinese','Continental','Delicatessen','Dessert','Eastern European','Fusion%2FEclectic','European','French','German','Global%2FInternational','Greek','Indian','Irish','Italian','Japanese','Mediterranean','Mexican%2FSouthwestern','Middle Eastern','Pizza','Pub','Seafood','Soups','South American','Spanish','Steakhouse','Sushi','Thai','Vegetarian','Vietnamese']
@@ -58,19 +60,22 @@ def getRecommendationsForLocation():
 	subcategory = request.args.get('sub')
 
 	if str(type) == 'attractions':
-		if not subcategory:
-			subcategory = random.choice(subcategories_list_tripadvisor)
-		recommendations_url = 'http://api.tripadvisor.com/api/partner/2.0/location/' + location_id + '/attractions?key=' + API_KEY_TRIPADVISOR + '&subcategory=' + subcategory
-		response = browser.open(recommendations_url)
-		html_doc = str(response.read())
-		json_dict = json.loads(html_doc)
-		results_list = json_dict['data']
-		pprint.pprint(results_list)
-		result_random = random.choice(results_list)
-		detail_url = result_random['api_detail_url']
-		response_detail = json.loads(str(browser.open(detail_url).read()))
-		result_random['api_detail_url'] = response_detail
-		return flask.jsonify(result_random)
+		while (True):	
+			if not subcategory:
+				subcategory = random.choice(subcategories_list_tripadvisor)
+			recommendations_url = 'http://api.tripadvisor.com/api/partner/2.0/location/' + location_id + '/attractions?key=' + API_KEY_TRIPADVISOR + '&subcategory=' + subcategory
+			response = browser.open(recommendations_url)
+			html_doc = str(response.read())
+			json_dict = json.loads(html_doc)
+			results_list = json_dict['data']
+			pprint.pprint(results_list)
+			result_random = random.choice(results_list)
+			if result_random['latitude'] == '0.0' and result_random['longitude'] == '0.0':
+				continue
+			detail_url = result_random['api_detail_url']
+			response_detail = json.loads(str(browser.open(detail_url).read()))
+			result_random['api_detail_url'] = response_detail
+			return flask.jsonify(result_random)
 	elif str(type) == 'restaurants':
 		while(True):
 			lat = request.args.get('lat')
@@ -96,6 +101,8 @@ def getRecommendationsForLocation():
 					continue
 				pprint.pprint(results_list)
 				result_random = random.choice(results_list)
+				if result_random['latitude'] == '0.0' and result_random['longitude'] == '0.0':
+					continue
 				detail_url = result_random['api_detail_url']
 				response_detail = json.loads(str(browser.open(detail_url).read()))
 				result_random['api_detail_url'] = response_detail
@@ -113,6 +120,8 @@ def getRecommendationsForLocation():
 					continue
 				pprint.pprint(results_list)
 				result_random = random.choice(results_list)
+				if result_random['latitude'] == '0.0' and result_random['longitude'] == '0.0':
+					continue
 				detail_url = result_random['api_detail_url']
 				response_detail = json.loads(str(browser.open(detail_url).read()))
 				result_random['api_detail_url'] = response_detail
@@ -188,6 +197,24 @@ def getFlights():
 					list_routes_cities_within_budget.append({'destination': dict_places_cities[route['DestinationId']], 'origin': dict_places_cities[route['OriginId']], 'price': route['Price']})			
 	pprint.pprint(cheap_route_country_cities_dict)
 	return flask.jsonify({'data': list_routes_cities_within_budget})
+
+@app.route('/hotels')
+def get_hotels():
+	location_id = request.args.get('loc_id')
+	hotels_url = 'http://api.tripadvisor.com/api/partner/2.0/location/' + location_id + '/hotels?key=' + API_KEY_TRIPADVISOR
+	response = browser.open(hotels_url)
+	html_doc = str(response.read())
+	json_dict = json.loads(html_doc)
+	hotels_list = json_dict['data']
+	count = 0
+	list_hotels_for_client = []
+	for hotel in hotels_list:
+		if count < NUM_HOTELS:
+				if not (hotel['latitude'] == '0.0' and hotel['longitude'] == '0.0'):
+					list_hotels_for_client.append(hotel)
+					count = count + 1
+	return flask.jsonify({'data': list_hotels_for_client})
+	# results_list = json_dict['data']
 
 if __name__ == '__main__':
 	app.debug = True
