@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300|Roboto:400,300' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<link href="./styles/bootstrap.min.css" rel="stylesheet">
+	<link href="./styles/datepicker.css" rel="stylesheet">
+	<link href="./styles/style.css" rel = "stylesheet">
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+	<script src = "./scripts/jquery.js" type = "text/javascript"></script>
+	<script src = "./scripts/hbs.js" type = "text/javascript"></script>
+	<script src = "./scripts/async.js" type = "text/javascript"></script>
+
+
+	<script src = "./scripts/datepicker.js" type = "text/javascript"></script>
+	<script src = "./scripts/bootstrap.min.js" type = "text/javascript"></script>
+	<script src = "./scripts/templates.js" type = "text/javascript" defer></script>
+	
+
+	<script src = "./scripts/index.js" type = "text/javascript"></script>
+
+
+
+
+	<title> Triply </title>
+</head>
+<body>
+
+	<div id = "google-map-canvas">
+	</div>
+
+	<div class = "plan view" id = "planning_view" style = "width:300px; height:100%; display:none;">
+		<div class = "black_blur_background"></div>
+		<div class = "container-fluid" style = "padding:0px;">
+			<div class = "col-xs-12" class = "plan_menubar_label"  style = "padding:0px; margin:0px; height:50px; background:black; opacity:0.7;color:white; text-align:center; padding-top:10px; font-size:20px;">
+				Day 1
+			</div>
+		</div>
+		<div id = "recommendation_results">
+
+		</div>
+	</div>
+
+	<div class = "transition view" style = "display:none;" id = "transition_view">
+		<div class = "black_blur_background"></div>
+		<div class = "container-fluid">
+			<div class = "col-xs-12" style = "text-align:center; padding-top:250px; color:white; padding-bottom:30px;">
+				<h3 style = "font-size:60px;" id = "transition_text"> Great! Now, where are we going? </h3>
+			</div>
+		</div>
+	</div>
+	<div class = "date view" style = ";" id = "date_view">
+		<div class = "black_blur_background"></div>
+		<div class = "container-fluid">
+			<div class = "col-xs-6 col-xs-offset-3" style = "text-align:center; padding-top:200px; color:white; padding-bottom:30px;">
+				<h3 id = "date_label" style = "font-size:32px;"> Hey, When do we fly? </h3>
+			</div>
+		</div>
+		<div class = "container-fluid" id = "date_holder">
+			<div class = "col-xs-6 col-xs-offset-3">
+				<div class="input-daterange input-group" id="datepicker">
+					<input type="text" class="input-sm form-control" name="start" id = "startDate" />
+					<span class="input-group-addon">to</span>
+					<input type="text" class="input-sm form-control" name="end" id = "endDate " />
+				</div>
+			</div>
+		</div>
+		<div class = "container-fluid">
+			<div class = "col-xs-2 col-xs-offset-5" style = "padding-top:20px; text-align:center;">
+				<button class="btn btn-default" id = "submit_date" type="submit">Triply Me!</button>	
+			</div>
+		</div>
+	</div>
+	<div class = "search view" style = "display:none;" id = "search_view">
+		<div class = "black_blur_background"></div>
+		<div class = "container-fluid" id = "search_bar_holder" style = "padding-top:250px;">
+			<div class = "col-xs-6 col-xs-offset-3">
+				<input id = "search" type = "text" placeholder = "Enter your Flight Budget / Destination"></input>
+			</div> 
+		</div>
+		<div class = "container-fluid" id = "search_results_container">
+			<div class = "col-xs-6 col-xs-offset-3">
+				<div id = "search_results" style = "">
+
+				</div>
+			</div>
+		</div> 
+	</div>
+	<div id = "loader" style = "display:none;">
+		<i class="fa fa-plane"></i>
+	</div>	
+</body>
+</html>
