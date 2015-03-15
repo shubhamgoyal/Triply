@@ -29,11 +29,13 @@
 	<div id = "google-map-canvas">
 	</div>
 
-	<div class = "plan view" id = "planning_view" style = "width:300px; height:100%; display:none;">
+	<div class = "plan view" id = "planning_view" style = "width:30%; height:100%; display:none;">
 		<div class = "black_blur_background"></div>
 		<div class = "container-fluid" style = "padding:0px;">
-			<div class = "col-xs-12" class = "plan_menubar_label"  style = "padding:0px; margin:0px; height:50px; background:black; opacity:0.7;color:white; text-align:center; padding-top:10px; font-size:20px;">
+			<div class = "col-xs-14" class = "plan_menubar_label"  style = "padding:0px; margin:0px; height:50px; background:black; opacity:0.7;color:white; text-align:center; padding-top:10px; font-size:20px;">
 				Day 1
+						<button class="btn btn-default pull-right" id = "submit_trip" type="submit">Next</button>	
+
 			</div>
 		</div>
 		<div id = "recommendation_results">
@@ -61,7 +63,7 @@
 				<div class="input-daterange input-group" id="datepicker">
 					<input type="text" class="input-sm form-control" name="start" id = "startDate" />
 					<span class="input-group-addon">to</span>
-					<input type="text" class="input-sm form-control" name="end" id = "endDate " />
+					<input type="text" class="input-sm form-control" name="end" id = "endDate" />
 				</div>
 			</div>
 		</div>
@@ -83,6 +85,32 @@
 				<div id = "search_results" style = "">
 
 				</div>
+			</div>
+		</div> 
+	</div>
+	<div class = "hotel view" style = "display:none;" id = "hotel_view">
+		<div class = "black_blur_background"></div>
+		<div class = "container-fluid" id = "search_results_container">
+			<div class = "col-xs-6 col-xs-offset-3">
+				<div id = "hotel_search_results" style = "">
+				</div>
+			</div>
+		</div> 
+	</div>
+	<div class = "end view" style = "display:none;" id = "end_view">
+		<div class = "black_blur_background"></div>
+		<div class = "container-fluid" style = "padding-top:200px;">
+			<div class = "col-xs-8 col-xs-offset-2">
+				<input id = "enter_email" type = "text" placeholder = "Enter your E-Mail address so we can send your itinerary"></input>
+			</div>
+		</div> 
+	</div>
+	<div class = "end view" style = "display:none;" id = "end_view1">
+		<div class = "black_blur_background"></div>
+		<div class = "container-fluid" style = "padding-top:200px;">
+			<div class = "col-xs-8 col-xs-offset-2" style = "text-align:center; color:white;">
+				<h2 style = "text-align:center; color:white;"> We've emailed you you're intinerary!</h2>
+				<h4 ><a style = "text-align:center; color:white; font-size:16px;" href = "/">Go again?</a></h4>
 			</div>
 		</div> 
 	</div>
