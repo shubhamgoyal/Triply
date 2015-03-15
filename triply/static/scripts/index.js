@@ -135,8 +135,8 @@ function initListeners(){
 			document.getElementById('search_results').innerHTML = "";
 		} else {
 			$('#search_bar_holder').animate({'padding-top':'40px'},200);
-			if(this.value == "440"){
-				$.ajax('/destinations?o_lat='+curlat+'&o_lon='+curlon+'&budget=440&start_date='+startDate+'&end_date='+endDate, {
+			if(this.value == "250"){
+				$.ajax('/destinations?o_lat='+curlat+'&o_lon='+curlon+'&budget=250&start_date='+startDate+'&end_date='+endDate, {
 					success:function(data){
 						var destinations = data.data;
 						for(var i in destinations){
