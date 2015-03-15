@@ -1,4 +1,4 @@
-var search_result_template = '<span class = "city"> {{name}}</span>';
+var search_result_template = '<span class = "city"> {{{name}}}</span>';
 
 var recommendation_template = '<div class = "container-fluid" style = "padding:0px;">\
 						<div class = "col-xs-12 recommendationItem"  style = "padding:0px; margin-top:5px; margin-bottom:5px; margin-left:10px; margin-right:10px; height:100px; background:white; padding-top:10px; font-size:20px;">\

@@ -47,6 +47,7 @@ window.onload = function(){
 						var currentHotel = data.data[i];
 						var r = document.createElement('div');
 						r.className = "search_result";
+						r.setAttribute('data-img', currentHotel.image_url);
 						r.setAttribute('data-loc-id', currentHotel.id);
 						r.setAttribute('data-url', currentHotel.web_url);
 						r.innerHTML = tmp({name:currentHotel.name, imageUrl : currentHotel.rating_image_url});
@@ -56,12 +57,28 @@ window.onload = function(){
 
 							});
 						});
+						$(r).hover(function(){
+							ximg = document.createElement('img');
+							ximg.src = this.getAttribute('data-img');
+							ximg.style.width = "300px";
+							ximg.style.height = "auto";
+							ximg.style.right = "0px";
+							ximg.style.position = "absolute";
+							ximg.style.bottom = "20px";
+							ximg.onclick = function(){
+								this.parentNode.removeChild(this);
+							};
+							document.body.appendChild(ximg);
+						}, function(){
+							if(ximg !== undefined)
+								document.body.removeChild(ximg);
+						})
 						document.getElementById('hotel_search_results').appendChild(r);
 					}
 				}
 			})
-		});
-	})
+});
+})
 }
 
 
@@ -128,6 +145,9 @@ function initListeners(){
 								searchDestinations(currentDestination.destination.replace(' ','_').replace(' ','_'), function(id,data){
 									var currentResult = data[0];
 									currentResultCoords = data[0].coords.split(',');
+									if(currentDestination.booking_link){
+										data[0].name = "<img style = 'width:20px; height:auto;' src = 'http://images.gofreedownload.net/emirates-airlines-96815.jpg'><a href = '"+currentDestination.booking_link+"' target= '_blank'>"+data[0].name+"</a>"
+									}
 									var resultHTML = search_result_template({name:data[0].name + ' (Starting from SGD' + currentDestination.price +')'});
 									var r = document.createElement('div');
 									r.className = "search_result";
@@ -244,6 +264,9 @@ function renderRecommendations(results){
 			ximg.style.right = "0px";
 			ximg.style.position = "absolute";
 			ximg.style.bottom = "20px";
+			ximg.onclick = function(){
+				this.parentNode.removeChild(this);
+			};
 			document.body.appendChild(ximg);
 		}, function(){
 			if(ximg !== undefined)

@@ -220,7 +220,7 @@ def getFlights():
 	list_routes_cities_within_budget = sorted(list_routes_cities_within_budget, key=lambda k: k['price'])				
 	pprint.pprint(cheap_route_country_cities_dict)
 	# emirates_flights_url = 'http://emirates.api.mashery.com/prebooking.getTripAdvise?amount=' + budget + '&currency=SGD&month=APRIL&origin=DXB&api_key=baca75efjv9ryguthnmftwm8'
-	list_routes_cities_within_budget.insert(0, {'destination': "Dubai, United Arab Emirates, Middle East", 'origin': 'Singapore', 'price': 1025.60, 'booking_link': 'http://fly4.emirates.com/CAB/IBE/SearchAvailability.aspx'})
+	list_routes_cities_within_budget.insert(0, {'destination': "Dubai", 'origin': 'Singapore', 'price': 1025.60, 'booking_link': 'http://fly4.emirates.com/CAB/IBE/SearchAvailability.aspx'})
 	return flask.jsonify({'data': list_routes_cities_within_budget})
 
 @app.route('/hotels')
