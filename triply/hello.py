@@ -236,8 +236,17 @@ def get_hotels():
 	for hotel in hotels_list:
 		if count < NUM_HOTELS:
 				if not (hotel['latitude'] == '0.0' and hotel['longitude'] == '0.0'):
+					image_search_url = ('https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=' + hotel['name'] + '&userip=' + ip_address)
+					image_search_url = image_search_url.replace(' ', '%20')
+					image_search_request = urllib2.Request(image_search_url, None, {'Referer': 'www.hax.sg'})
+					image_search_response = urllib2.urlopen(image_search_request)
+					image_search_results = simplejson.load(image_search_response)
+					# pprint.pprint(image_search_results)
+					image_url = image_search_results['responseData']['results'][0]['url']
+					hotel['image_url'] = image_url
 					list_hotels_for_client.append(hotel)
 					count = count + 1
+	pprint.pprint(list_hotels_for_client)
 	return flask.jsonify({'data': list_hotels_for_client})
 	# results_list = json_dict['data']
 
