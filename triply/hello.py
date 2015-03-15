@@ -219,6 +219,8 @@ def getFlights():
 					list_routes_cities_within_budget.append({'destination': dict_places_cities[route['DestinationId']], 'origin': dict_places_cities[route['OriginId']], 'price': route['Price']})			
 	list_routes_cities_within_budget = sorted(list_routes_cities_within_budget, key=lambda k: k['price'])				
 	pprint.pprint(cheap_route_country_cities_dict)
+	# emirates_flights_url = 'http://emirates.api.mashery.com/prebooking.getTripAdvise?amount=' + budget + '&currency=SGD&month=APRIL&origin=DXB&api_key=baca75efjv9ryguthnmftwm8'
+	list_routes_cities_within_budget.insert(0, {'destination': "Dubai, United Arab Emirates, Middle East", 'origin': 'Singapore', 'price': 1025.60, 'booking_link': 'http://fly4.emirates.com/CAB/IBE/SearchAvailability.aspx'})
 	return flask.jsonify({'data': list_routes_cities_within_budget})
 
 @app.route('/hotels')
@@ -238,6 +240,14 @@ def get_hotels():
 					count = count + 1
 	return flask.jsonify({'data': list_hotels_for_client})
 	# results_list = json_dict['data']
+
+@app.route('/find_flights')
+def find_flights():
+	o_lat = request.args.get('o_lat')
+	o_lon = request.args.get('o_lon')
+	start_date = request.args.get('start_date')
+	end_date = request.args.get('end_date')
+
 
 if __name__ == '__main__':
 	app.debug = True
