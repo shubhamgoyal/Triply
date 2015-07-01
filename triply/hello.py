@@ -55,6 +55,7 @@ def getIDForLocation():
 				result_dict['coords'] = result['coords']
 				ids.append(result_dict)
 				ids_list.append(result['value'])
+	print ids_list
 	return flask.jsonify({'data':ids})
 
 @app.route('/recommendations')
